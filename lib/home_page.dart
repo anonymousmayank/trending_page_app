@@ -5,18 +5,22 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          TextButton(
-            onPressed: () {},
-            child: Text('Trending Page'),
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: Column(
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: Text('Trending Page'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text('Error Page'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {},
-            child: Text('Error Page'),
-          ),
-        ],
+        ),
       ),
     );
   }
