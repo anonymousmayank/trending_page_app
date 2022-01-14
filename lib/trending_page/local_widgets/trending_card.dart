@@ -88,6 +88,7 @@ class TrendingCard extends StatelessWidget {
                 if (expanded)
                   Container(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           description ?? '',

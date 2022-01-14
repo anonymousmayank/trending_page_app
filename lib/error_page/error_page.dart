@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redux/redux.dart';
 import 'package:trending_page_app/constants/colors.dart';
 import 'package:trending_page_app/constants/constants.dart';
 import 'package:trending_page_app/constants/text_styles.dart';
@@ -6,10 +7,12 @@ import 'package:trending_page_app/constants/text_styles.dart';
 class CustomErrorWidget extends StatelessWidget {
   const CustomErrorWidget({
     this.retryCallback,
+    this.store,
     Key? key,
   }) : super(key: key);
 
-  final void Function()? retryCallback;
+  final dynamic Function(dynamic)? retryCallback;
+  final Store? store;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,7 @@ class CustomErrorWidget extends StatelessWidget {
           TextButton(
             onPressed: () {
               if (retryCallback != null) {
-                retryCallback!();
+                retryCallback!(store);
               }
             },
             child: Container(
@@ -61,7 +64,7 @@ class CustomErrorWidget extends StatelessWidget {
                   color: secondary,
                 ),
               ),
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: 12), 
               margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: Center(
                 child: Text(
