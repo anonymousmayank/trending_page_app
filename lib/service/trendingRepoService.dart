@@ -3,12 +3,20 @@ import 'package:http/http.dart' as http;
 import 'package:trending_page_app/state/models/trendingRepoModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<TrendingRepo>>? fetchTrendingRepo(Function? errorCallback) async {
+Future<List<TrendingRepo>>? fetchTrendingRepo(
+    Function? errorCallback, bool? forceFetch) async {
+  String url = "https://gh-trending-api.herokuapp.com/repositories";
   try {
-    String url = "https://gh-trending-api.herokuapp.com/repositories";
-    dynamic res = await fetchFromLocalStorage();
-    if (res != null && res.length > 0) {
-      return res;
+    if (!forceFetch!) {
+      dynamic res = await fetchFromLocalStorage();
+      if (res != null && res.length > 0) {
+        return res;
+      } else {
+        final response = await http.get(Uri.parse(url));
+        storeToLocalStorage(response.body);
+        print('Fetched From API');
+        return decodeTrendingRepo(response.body);
+      }
     } else {
       final response = await http.get(Uri.parse(url));
       storeToLocalStorage(response.body);
