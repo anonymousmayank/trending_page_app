@@ -3,12 +3,13 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
 import 'package:trending_page_app/home_page.dart';
+import 'package:trending_page_app/state/starred_repo/thunk.dart';
 import 'package:trending_page_app/state/store.dart';
 import 'package:trending_page_app/state/trending_repo/thunk.dart';
 
 void main() {
   Store<AppState> _store = Store<AppState>(appReducer,
-      initialState: AppState.initial(), middleware: [trendingRepoThunk]);
+      initialState: AppState.initial(), middleware: [trendingRepoThunk, starredRepoThunk]);
   runApp(MyApp(store: _store));
 }
 

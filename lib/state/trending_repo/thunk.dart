@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:trending_page_app/service/trendingRepoService.dart';
+import 'package:trending_page_app/service/trending_repo_service.dart';
 
 import 'package:trending_page_app/state/trending_repo/actions.dart';
 import '../store.dart';

@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:trending_page_app/constants/text_styles.dart';
 
-PreferredSizeWidget baseAppBar = AppBar(
+PreferredSizeWidget baseAppBar(String? title){
+  return AppBar(
   automaticallyImplyLeading: false,
   backgroundColor: Colors.white,
   elevation: 0,
   title: Center(
     child: Text(
-      'Trending',
+      title ?? '',
       style: heading1.copyWith(color: Colors.black),
     ),
   ),
@@ -22,3 +23,4 @@ PreferredSizeWidget baseAppBar = AppBar(
     ),
   ],
 );
+}

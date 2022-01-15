@@ -4,6 +4,7 @@ import 'package:money_formatter/money_formatter.dart';
 import 'package:trending_page_app/constants/colors.dart';
 import 'package:trending_page_app/constants/constants.dart';
 import 'package:trending_page_app/constants/text_styles.dart';
+import 'package:trending_page_app/state/models/trendingRepoModel.dart';
 
 class TrendingCard extends StatelessWidget {
   TrendingCard({
@@ -16,6 +17,10 @@ class TrendingCard extends StatelessWidget {
     this.forks,
     this.avatarUrl,
     this.expanded = false,
+    this.isStarred = false,
+    this.repo,
+    this.starRepoCallback,
+    this.unstarRepoCallback,
     Key? key,
   }) : super(key: key);
 
@@ -28,6 +33,10 @@ class TrendingCard extends StatelessWidget {
   final double? forks;
   final String? avatarUrl;
   final bool expanded;
+  final bool isStarred;
+  final TrendingRepo? repo;
+  final Function? starRepoCallback;
+  final Function? unstarRepoCallback;
 
   int getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");
@@ -39,6 +48,7 @@ class TrendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     MoneyFormatter starsFormatter =
         MoneyFormatter(amount: stars != null ? stars! : 0);
     MoneyFormatter forksFormatter =
@@ -72,17 +82,46 @@ class TrendingCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  username ?? '',
-                  style: heading3,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  repoName ?? '',
-                  style: heading2.copyWith(
-                    color: black,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            username ?? '',
+                            style: heading3,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            repoName ?? '',
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            style: heading2.copyWith(
+                              color: black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        if (isStarred) {
+                          unstarRepoCallback!(repo);
+                        } else {
+                          starRepoCallback!(repo);
+                        }
+                      },
+                      icon: Icon(
+                        isStarred ? Icons.star : Icons.star_border,
+                        color: golden,
+                        size: 30,
+                      ),
+                    )
+                  ],
                 ),
                 const SizedBox(height: 5),
                 if (expanded)
