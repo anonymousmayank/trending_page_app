@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:trending_page_app/constants/colors.dart';
+import 'package:trending_page_app/constants/text_styles.dart';
 
 import 'package:trending_page_app/constants/widgets.dart';
 import 'package:trending_page_app/error_page/error_page.dart';
@@ -27,6 +29,7 @@ class _TrendingPageState extends State<TrendingPage> {
   bool isLoading = true;
   bool isError = false;
   List<int> starredRepos = [];
+  String? currentLang = '';
 
   void _successCallback() {
     print('Success Callback Called');
@@ -97,6 +100,101 @@ class _TrendingPageState extends State<TrendingPage> {
     return false;
   }
 
+  int getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  Widget makeWidget(
+      TrendingRepo repo, int index, List<TrendingRepo> starredRepoList) {
+    if (repo.language != currentLang) {
+      currentLang = repo.language;
+      return Column(
+        children: [
+          Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 8,
+              ),
+              color: Color(getColorFromHex(repo.languageColor != null
+                  ? repo.languageColor!
+                  : '#000000')),
+              child: Text(
+                repo.language ?? 'N/A',
+                style: heading2.copyWith(
+                  color: white,
+                  fontWeight: FontWeight.w700,
+                ),
+              )),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (expandedRepo == index) {
+                  expandedRepo = -1;
+                } else {
+                  expandedRepo = index;
+                }
+              });
+            },
+            child: TrendingCard(
+              username: repo.username,
+              repoName: repo.repositoryName,
+              description: repo.description,
+              language: repo.language,
+              languageColor: repo.languageColor,
+              stars:
+                  (repo.totalStars != null) ? repo.totalStars!.toDouble() : 0,
+              forks: (repo.forks != null) ? repo.forks!.toDouble() : 0,
+              avatarUrl: repo.builtBy![0].avatar,
+              expanded: expandedRepo == index,
+              isStarred: _checkStarred(
+                starredRepoList,
+                repo.rank!,
+              ),
+              repo: repo,
+              starRepoCallback: starRepo,
+              unstarRepoCallback: unStarRepo,
+            ),
+          )
+        ],
+      );
+    } else {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            if (expandedRepo == index) {
+              expandedRepo = -1;
+            } else {
+              expandedRepo = index;
+            }
+          });
+        },
+        child: TrendingCard(
+          username: repo.username,
+          repoName: repo.repositoryName,
+          description: repo.description,
+          language: repo.language,
+          languageColor: repo.languageColor,
+          stars: (repo.totalStars != null) ? repo.totalStars!.toDouble() : 0,
+          forks: (repo.forks != null) ? repo.forks!.toDouble() : 0,
+          avatarUrl: repo.builtBy![0].avatar,
+          expanded: expandedRepo == index,
+          isStarred: _checkStarred(
+            starredRepoList,
+            repo.rank!,
+          ),
+          repo: repo,
+          starRepoCallback: starRepo,
+          unstarRepoCallback: unStarRepo,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -121,51 +219,8 @@ class _TrendingPageState extends State<TrendingPage> {
                       itemBuilder: (context, index) {
                         return isLoading
                             ? LoadingCard()
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (expandedRepo == index) {
-                                      expandedRepo = -1;
-                                    } else {
-                                      expandedRepo = index;
-                                    }
-                                  });
-                                },
-                                child: TrendingCard(
-                                  username:
-                                      state.trendingRepoList?[index].username,
-                                  repoName: state
-                                      .trendingRepoList?[index].repositoryName,
-                                  description: state
-                                      .trendingRepoList?[index].description,
-                                  language:
-                                      state.trendingRepoList?[index].language,
-                                  languageColor: state
-                                      .trendingRepoList?[index].languageColor,
-                                  stars: (state.trendingRepoList?[index]
-                                              .totalStars !=
-                                          null)
-                                      ? state
-                                          .trendingRepoList![index].totalStars!
-                                          .toDouble()
-                                      : 0,
-                                  forks: (state
-                                              .trendingRepoList?[index].forks !=
-                                          null)
-                                      ? state.trendingRepoList![index].forks!
-                                          .toDouble()
-                                      : 0,
-                                  avatarUrl: state.trendingRepoList?[index]
-                                      .builtBy![0].avatar,
-                                  expanded: expandedRepo == index,
-                                  isStarred: _checkStarred(
-                                      state.starredRepoList!,
-                                      state.trendingRepoList![index].rank!),
-                                  repo: state.trendingRepoList![index],
-                                  starRepoCallback: starRepo,
-                                  unstarRepoCallback: unStarRepo,
-                                ),
-                              );
+                            : makeWidget(state.trendingRepoList![index], index,
+                                state.starredRepoList!);
                       },
                     ),
                   ),

@@ -30,7 +30,10 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 10),
-                  color: Colors.blue,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.blue,
+                  ),
                   child: Center(
                     child: Text(
                       'Trending Page',
@@ -49,7 +52,10 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 10),
-                  color: Colors.blue,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.blue,
+                  ),
                   child: Center(
                     child: Text(
                       'Starred Repo Page',

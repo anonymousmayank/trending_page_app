@@ -52,3 +52,17 @@ List<TrendingRepo> decodeTrendingRepo(String responseBody) {
       .map<TrendingRepo>((json) => TrendingRepo.fromJson(json))
       .toList();
 }
+
+List<TrendingRepo> sortTrendingList(List<TrendingRepo> trendingRepo) {
+  print(trendingRepo);
+  trendingRepo.sort((TrendingRepo r1, TrendingRepo r2) {
+    if(r1.language!=null && r2.language!=null){
+      return (r1.language!).compareTo(r2.language!);
+    }
+    else if(r1.language == null)
+      return 1;
+    return -1;
+  });
+
+  return trendingRepo;
+}
