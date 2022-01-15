@@ -8,25 +8,23 @@ import 'package:trending_page_app/error_page/error_page.dart';
 import 'package:trending_page_app/state/models/trendingRepoModel.dart';
 import 'package:trending_page_app/state/starred_repo/action.dart';
 import 'package:trending_page_app/state/store.dart';
-import 'package:trending_page_app/state/trending_repo/actions.dart';
 import 'package:trending_page_app/trending_page/local_widgets/loading_card.dart';
 import 'package:trending_page_app/trending_page/local_widgets/trending_card.dart';
 
-class TrendingPage extends StatefulWidget {
-  const TrendingPage({Key? key}) : super(key: key);
+class StarredRepoPage extends StatefulWidget {
+  const StarredRepoPage({Key? key}) : super(key: key);
 
   @override
-  _TrendingPageState createState() => _TrendingPageState();
+  _StarredRepoPageState createState() => _StarredRepoPageState();
 }
 
-class _TrendingPageState extends State<TrendingPage> {
+class _StarredRepoPageState extends State<StarredRepoPage> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   Store? _store;
   int expandedRepo = -1;
   bool isLoading = true;
   bool isError = false;
-  List<int> starredRepos = [];
 
   void _successCallback() {
     print('Success Callback Called');
@@ -47,11 +45,6 @@ class _TrendingPageState extends State<TrendingPage> {
 
   _fetchTrendingRepo(store) {
     _store = store;
-    store.dispatch(LoadTrendingRepo(
-      successCallback: _successCallback,
-      errorCallback: _errorCallback,
-      forceFetch: false,
-    ));
     store.dispatch(LoadStarredRepo(
       successCallback: _successCallback,
       errorCallback: _errorCallback,
@@ -63,10 +56,9 @@ class _TrendingPageState extends State<TrendingPage> {
       isLoading = true;
     });
     if (_store != null) {
-      _store!.dispatch(LoadTrendingRepo(
+      _store!.dispatch(LoadStarredRepo(
         successCallback: _successCallback,
         errorCallback: _errorCallback,
-        forceFetch: true,
       ));
     }
     _refreshController.refreshCompleted();
@@ -101,7 +93,7 @@ class _TrendingPageState extends State<TrendingPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: baseAppBar('Trending'),
+        appBar: baseAppBar('Starred Repositories'),
         body: StoreConnector<AppState, AppState>(
           onInit: _fetchTrendingRepo,
           converter: (_store) => _store.state,
@@ -116,8 +108,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     enablePullDown: true,
                     onRefresh: _onRefresh,
                     child: ListView.builder(
-                      itemCount:
-                          isLoading ? 10 : state.trendingRepoList?.length,
+                      itemCount: isLoading ? 10 : state.starredRepoList?.length,
                       itemBuilder: (context, index) {
                         return isLoading
                             ? LoadingCard()
@@ -133,35 +124,34 @@ class _TrendingPageState extends State<TrendingPage> {
                                 },
                                 child: TrendingCard(
                                   username:
-                                      state.trendingRepoList?[index].username,
+                                      state.starredRepoList?[index].username,
                                   repoName: state
-                                      .trendingRepoList?[index].repositoryName,
-                                  description: state
-                                      .trendingRepoList?[index].description,
+                                      .starredRepoList?[index].repositoryName,
+                                  description:
+                                      state.starredRepoList?[index].description,
                                   language:
-                                      state.trendingRepoList?[index].language,
+                                      state.starredRepoList?[index].language,
                                   languageColor: state
-                                      .trendingRepoList?[index].languageColor,
-                                  stars: (state.trendingRepoList?[index]
+                                      .starredRepoList?[index].languageColor,
+                                  stars: (state.starredRepoList?[index]
                                               .totalStars !=
                                           null)
                                       ? state
-                                          .trendingRepoList![index].totalStars!
+                                          .starredRepoList![index].totalStars!
                                           .toDouble()
                                       : 0,
-                                  forks: (state
-                                              .trendingRepoList?[index].forks !=
+                                  forks: (state.starredRepoList?[index].forks !=
                                           null)
-                                      ? state.trendingRepoList![index].forks!
+                                      ? state.starredRepoList![index].forks!
                                           .toDouble()
                                       : 0,
-                                  avatarUrl: state.trendingRepoList?[index]
+                                  avatarUrl: state.starredRepoList?[index]
                                       .builtBy![0].avatar,
                                   expanded: expandedRepo == index,
                                   isStarred: _checkStarred(
                                       state.starredRepoList!,
-                                      state.trendingRepoList![index].rank!),
-                                  repo: state.trendingRepoList![index],
+                                      state.starredRepoList![index].rank!),
+                                  repo: state.starredRepoList![index],
                                   starRepoCallback: starRepo,
                                   unstarRepoCallback: unStarRepo,
                                 ),
